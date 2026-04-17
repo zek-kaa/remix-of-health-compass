@@ -223,7 +223,13 @@ export default function Landing() {
                         <h4 className="text-lg font-bold text-slate-900">{t('landing.learnMore')}</h4>
                         <ul className="space-y-3">
                           {f.details.map((d, idx) => (
-                            <li key={idx} className="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                            <li
+                              key={`${expandedFeature}-${idx}`}
+                              className="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100 opacity-0"
+                              style={{
+                                animation: `slide-down-fade 500ms cubic-bezier(0.16, 1, 0.3, 1) ${200 + idx * 120}ms forwards`
+                              }}
+                            >
                               <CheckCircle2 className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                               <p className="text-sm sm:text-base text-slate-700 leading-relaxed">{d}</p>
                             </li>
