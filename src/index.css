@@ -931,3 +931,52 @@
 }
 
 
+
+/* ===== Login success: rising & falling leaves ===== */
+@keyframes leaf-rise {
+  0% {
+    transform: translate3d(0, 110vh, 0) rotate(0deg) scale(0.6);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--leaf-drift, 0px), 30vh, 0) rotate(var(--leaf-rotate, 180deg)) scale(1);
+    opacity: 0.95;
+  }
+}
+
+@keyframes leaf-fall {
+  0% {
+    transform: translate3d(0, 25vh, 0) rotate(0deg) scale(0.9);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--leaf-drift, 0px), 115vh, 0) rotate(var(--leaf-rotate, 360deg)) scale(1);
+    opacity: 0;
+  }
+}
+
+.leaf-rise,
+.leaf-fall {
+  position: absolute;
+  bottom: 0;
+  display: inline-block;
+  pointer-events: none;
+  will-change: transform, opacity;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  animation-fill-mode: forwards;
+}
+
+.leaf-rise {
+  animation-name: leaf-rise;
+}
+
+.leaf-fall {
+  animation-name: leaf-fall;
+  animation-timing-function: cubic-bezier(0.55, 0.05, 0.5, 1);
+}

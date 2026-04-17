@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Heart, Mail, Lock, User, ArrowRight } from "lucide-react";
+import LoginSuccess from "@/components/LoginSuccess";
 
 interface AuthFormProps {
   t: (key: string) => string;
@@ -26,6 +27,7 @@ export default function AuthForm({
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,8 +53,7 @@ export default function AuthForm({
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        toast.success(t('common.login') + "!");
-        onSuccess();
+        setShowSuccess(true);
       }
     } catch (err: any) {
       toast.error(err.message);
@@ -88,6 +89,8 @@ export default function AuthForm({
   };
 
   return (
+    <>
+    {showSuccess && <LoginSuccess message={t('common.login') + "!"} onDone={onSuccess} />}
     <div className={`space-y-3 p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-xl border border-white/60 shadow-2xl ${className}`}>
       {/* Google Button */}
       <Button 
@@ -175,5 +178,6 @@ export default function AuthForm({
         </button>
       </p>
     </div>
+    </>
   );
 }
