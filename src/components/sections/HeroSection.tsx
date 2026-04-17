@@ -27,15 +27,6 @@ export function HeroSection() {
       <div className="absolute -bottom-10 -left-10 w-36 h-36 rounded-full bg-info/10 blur-2xl animate-float-slow opacity-60" style={{ animationDelay: "1.5s" }} />
 
       <div className="relative">
-        {/* Header with icon - scroll fade in */}
-        <div className="scroll-fade-in">
-          <div className="flex items-center gap-2.5 mb-2">
-            <div className="h-10 w-10 rounded-xl bg-primary/20 backdrop-blur-sm flex items-center justify-center pulse-glow border border-primary/30">
-              <Heart className="h-5 w-5 text-primary" />
-            </div>
-            <span className="text-lg font-bold text-foreground tracking-tight">{t('common.appName')}</span>
-          </div>
-        </div>
 
         {/* Main greeting */}
         <div className="flex items-center gap-2 scroll-fade-in" style={{ animationDelay: "100ms" }}>
