@@ -141,7 +141,7 @@ export default {
         },
         "card-breathe": {
           "0%, 100%": { transform: "scale(1)" },
-          "50%": { transform: "scale(1.02)" }
+          "50%": { transform: "scale(1.015)" }
         },
       },
 
@@ -161,7 +161,7 @@ export default {
         "shimmer": "shimmer 2s infinite",
         "bounce-soft": "bounce-soft 1s ease-in-out",
         "zoom-pulse": "zoom-pulse 3s ease-in-out infinite",
-        "card-breathe": "card-breathe 8s ease-in-out infinite",
+        "card-breathe": "card-breathe 15s ease-in-out infinite",
       },
 
     },
