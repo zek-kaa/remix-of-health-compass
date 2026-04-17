@@ -78,7 +78,7 @@ export default function Landing() {
 
       {/* Hero Section */}
       <section className="relative pt-20 sm:pt-32 pb-8 sm:pb-0 px-4 sm:px-6 overflow-hidden min-h-screen flex items-center justify-center z-10"
-        style={{ backgroundImage: `url('/1 (2).png')`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', animation: `zoom-in-out 6s ease-in-out infinite` }}>
+        style={{ backgroundImage: `url('/1 (2).png')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="absolute inset-0 bg-gradient-to-r from-slate-50 via-blue-50/80 to-transparent" />
         <div className="w-full max-w-6xl mx-auto relative z-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 items-center">
@@ -130,15 +130,21 @@ export default function Landing() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {[
-                { icon: Users, title: t('dashboard.patients'), desc: t('landing.feature1Desc'), color: "from-blue-500 to-blue-600" },
-                { icon: Activity, title: t('landing.feature2Title'), desc: t('landing.feature2Desc'), color: "from-cyan-500 to-blue-500" },
-                { icon: BarChart3, title: t('landing.dataAnalytics'), desc: t('landing.dataAnalyticsDesc'), color: "from-blue-600 to-slate-600" },
-                { icon: Bell, title: t('landing.feature2Title'), desc: t('landing.feature2Desc'), color: "from-slate-600 to-blue-500" },
+                { icon: Users, title: t('dashboard.patients'), desc: t('landing.feature1Desc'), color: "from-blue-500 to-blue-600", href: "/auth" },
+                { icon: Activity, title: t('landing.feature2Title'), desc: t('landing.feature2Desc'), color: "from-cyan-500 to-blue-500", href: "/auth" },
+                { icon: BarChart3, title: t('landing.dataAnalytics'), desc: t('landing.dataAnalyticsDesc'), color: "from-blue-600 to-slate-600", href: "/auth" },
+                { icon: Bell, title: t('landing.feature2Title'), desc: t('landing.feature2Desc'), color: "from-slate-600 to-blue-500", href: "/auth" },
               ].map((feature, i) => (
-                <div key={i} className="group animate-fade-in-up neumorphic-card animate-zoom-pulse" style={{ animationDelay: `${i * 100}ms` }}>
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-300/20 to-slate-300/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10" />
-                  <div className="relative rounded-2xl border border-white/60 bg-gradient-to-br from-white/50 to-slate-50/50 backdrop-blur-xl p-4 sm:p-6 transition-all duration-300 group-hover:border-blue-300/40 group-hover:shadow-floating group-hover:-translate-y-1">
-                    <div className="h-10 sm:h-12 w-10 sm:w-12 rounded-xl bg-gradient-to-br from-blue-100 to-slate-100 flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300 neumorphic-icon">
+                <Link
+                  to={feature.href}
+                  key={i}
+                  className="group relative block animate-fade-in-up animate-zoom-pulse cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-3xl"
+                  style={{ animationDelay: `${i * 100}ms` }}
+                  aria-label={feature.title}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-300/30 to-slate-300/30 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10" />
+                  <div className="relative h-full rounded-3xl border border-white/60 bg-gradient-to-br from-white/60 to-slate-50/60 backdrop-blur-xl p-4 sm:p-6 shadow-lg transition-all duration-300 group-hover:border-blue-300/50 group-hover:shadow-2xl group-hover:-translate-y-2">
+                    <div className="h-10 sm:h-12 w-10 sm:w-12 rounded-2xl bg-gradient-to-br from-blue-100 to-slate-100 flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300 neumorphic-icon">
                       <feature.icon className="h-5 sm:h-6 w-5 sm:w-6 text-blue-600" />
                     </div>
                     <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2">{feature.title}</h3>
@@ -148,19 +154,38 @@ export default function Landing() {
                       <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Image 2 Section - Commented out to not show preview */}
-<section className="relative py-12 sm:py-20 px-4 sm:px-6 z-10">
-        <div className="max-w-6xl mx-auto">
+      {/* Modern Technology Section with full-width background */}
+      <section className="relative py-12 sm:py-20 px-4 sm:px-6 z-10 overflow-hidden">
+        {/* Full-width background image */}
+        <div className="absolute inset-0 -z-10">
+          <img
+            src="/2 (2).png"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            className="w-full h-full object-cover"
+          />
+          {/* Themed gradient overlay for readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-50 via-blue-50/90 to-slate-100/80" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white/70" />
+        </div>
+
+        <div className="max-w-6xl mx-auto relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 items-center">
             <div className="relative h-56 sm:h-96 rounded-3xl overflow-hidden shadow-floating border border-white/50 animate-fade-in-up order-2 lg:order-1">
-              <img src="/2 (2).png" alt="Health Features" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy" />
+              <img
+                src="/2 (2).png"
+                alt="Health Features"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 to-transparent" />
             </div>
             <div className="space-y-4 sm:space-y-6 animate-fade-in-up order-1 lg:order-2">
@@ -168,7 +193,7 @@ export default function Landing() {
                 {t('landing.modernTech')}
                 <span className="block text-blue-600">{t('landing.forBetterResults')}</span>
               </h3>
-              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">{t('landing.modernTechDesc')}</p>
+              <p className="text-sm sm:text-base text-slate-700 leading-relaxed">{t('landing.modernTechDesc')}</p>
               <div className="space-y-3 sm:space-y-4 pt-2">
                 {[t('landing.realtimeAnalytics'), t('landing.predictiveAlerts'), t('landing.cloudStorage')].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 text-sm sm:text-base text-slate-700 neumorphic-list">
