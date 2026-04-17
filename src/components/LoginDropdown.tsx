@@ -110,21 +110,18 @@ export default function LoginDropdown({
       <DropdownMenuContent 
         align="end" 
         sideOffset={12}
-        className="w-80 sm:w-96 p-1 rounded-3xl border-0 bg-white/90 backdrop-blur-xl shadow-2xl max-h-[90vh] overflow-y-auto [animation:dropdown-unfold_300ms_cubic-bezier(0.16,1,0.3,1)]
-          sm:[animation-fill-mode:forwards]"
+        className="w-[92vw] sm:w-96 p-0 rounded-3xl border-0 bg-white/95 backdrop-blur-xl shadow-2xl [animation:dropdown-unfold_300ms_cubic-bezier(0.16,1,0.3,1)] sm:[animation-fill-mode:forwards]"
       >
-        <div className="[transform-origin:top_right] animate-dropdown-unfold">
-<div className="p-6 sm:p-8 bg-white/95 backdrop-blur-2xl border border-white/80 shadow-2xl rounded-3xl">
-            <div className="flex items-center gap-2 mb-6 p-3 rounded-2xl bg-gradient-to-r from-blue-500/5 to-blue-600/5 border border-blue-100/50">
-              <Heart className="h-5 w-5 text-blue-600" />
-              <h3 className="font-bold text-lg text-foreground">{t('common.appName')}</h3>
-            </div>
-            <AuthForm 
-              t={t} 
-              onSuccess={onAuthSuccess}
-              className="max-h-[350px] overflow-y-auto [&_.space-y-4]:space-y-3"
-            />
+        <div className="[transform-origin:top_right] animate-dropdown-unfold p-4 sm:p-5">
+          <div className="flex items-center gap-2 mb-3 justify-center">
+            <Heart className="h-5 w-5 text-blue-600" />
+            <h3 className="font-bold text-base text-foreground">{t('common.appName')}</h3>
           </div>
+          <AuthForm 
+            t={t} 
+            onSuccess={onAuthSuccess}
+            className="!p-0 !bg-transparent !border-0 !shadow-none [&>*]:!space-y-2.5"
+          />
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

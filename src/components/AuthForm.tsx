@@ -88,11 +88,11 @@ export default function AuthForm({
   };
 
   return (
-    <div className={`space-y-4 p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-xl border border-white/60 shadow-2xl ${className}`}>
+    <div className={`space-y-3 p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-xl border border-white/60 shadow-2xl ${className}`}>
       {/* Google Button */}
       <Button 
         variant="outline" 
-        className="w-full h-12 rounded-xl border-2" 
+        className="w-full h-10 rounded-xl border-2 text-sm" 
         onClick={handleGoogleLogin}
         disabled={loading}
       >
@@ -115,40 +115,40 @@ export default function AuthForm({
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-2.5">
         {mode === "signup" && (
           <div className="relative">
-            <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder={t('auth.fullName')}
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="pl-11 h-14 rounded-2xl text-lg border-2 focus:border-blue-500 shadow-inner"
+              className="pl-10 h-11 rounded-xl text-sm border-2 focus:border-blue-500"
               required
               disabled={loading}
             />
           </div>
         )}
         <div className="relative">
-          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="email"
             placeholder={t('auth.email')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="pl-11 h-14 rounded-2xl text-lg border-2 focus:border-blue-500 shadow-inner"
+            className="pl-10 h-11 rounded-xl text-sm border-2 focus:border-blue-500"
             required
             disabled={loading}
           />
         </div>
         <div className="relative">
-          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="password"
             placeholder={t('auth.password')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="pl-11 h-14 rounded-2xl text-lg border-2 focus:border-blue-500 shadow-inner"
+            className="pl-10 h-11 rounded-xl text-sm border-2 focus:border-blue-500"
             required
             minLength={6}
             disabled={loading}
@@ -156,15 +156,15 @@ export default function AuthForm({
         </div>
         <Button 
           type="submit" 
-          className="w-full h-14 rounded-2xl text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-glow hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 neumorphic-button" 
+          className="w-full h-11 rounded-xl text-sm font-bold !bg-blue-600 hover:!bg-blue-700 !text-white shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2" 
           disabled={loading}
         >
-          {loading ? t('common.loading') : (mode === "login" ? t('auth.login') : t('auth.signup'))}
-          <ArrowRight className="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" />
+          <span>{loading ? t('common.loading') : (mode === "login" ? t('auth.login') : t('auth.signup'))}</span>
+          <ArrowRight className="h-4 w-4" />
         </Button>
       </form>
 
-      <p className="text-center text-sm text-muted-foreground px-2">
+      <p className="text-center text-xs text-muted-foreground px-2">
         {mode === "login" ? t('auth.noAccount') : t('auth.haveAccount')}
         <button
           onClick={toggleMode}
