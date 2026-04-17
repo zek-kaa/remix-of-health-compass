@@ -138,12 +138,15 @@ export default function Landing() {
                 <Link
                   to={feature.href}
                   key={i}
-                  className="group relative block animate-fade-in-up animate-zoom-pulse cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-3xl"
+                  className="group relative block animate-fade-in-up cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-3xl"
                   style={{ animationDelay: `${i * 100}ms` }}
                   aria-label={feature.title}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-300/30 to-slate-300/30 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10" />
-                  <div className="relative h-full rounded-3xl border border-white/60 bg-gradient-to-br from-white/60 to-slate-50/60 backdrop-blur-xl p-4 sm:p-6 shadow-lg transition-all duration-300 group-hover:border-blue-300/50 group-hover:shadow-2xl group-hover:-translate-y-2">
+                  <div
+                    className="relative h-full rounded-3xl border border-white/60 bg-gradient-to-br from-white/60 to-slate-50/60 backdrop-blur-xl p-4 sm:p-6 shadow-lg animate-card-breathe transition-[box-shadow,border-color] duration-300 group-hover:border-blue-300/50 group-hover:shadow-2xl"
+                    style={{ animationDelay: `${i * 250}ms` }}
+                  >
                     <div className="h-10 sm:h-12 w-10 sm:w-12 rounded-2xl bg-gradient-to-br from-blue-100 to-slate-100 flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300 neumorphic-icon">
                       <feature.icon className="h-5 sm:h-6 w-5 sm:w-6 text-blue-600" />
                     </div>
@@ -172,9 +175,9 @@ export default function Landing() {
             loading="lazy"
             className="w-full h-full object-cover"
           />
-          {/* Themed gradient overlay for readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-50 via-blue-50/90 to-slate-100/80" />
-          <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white/70" />
+          {/* Light themed gradient overlay - keeps image visible while ensuring text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-50/70 via-blue-50/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/40" />
         </div>
 
         <div className="max-w-6xl mx-auto relative">
