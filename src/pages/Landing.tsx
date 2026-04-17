@@ -78,7 +78,7 @@ export default function Landing() {
 
       {/* Hero Section */}
       <section className="relative pt-20 sm:pt-32 pb-8 sm:pb-0 px-4 sm:px-6 overflow-hidden min-h-screen flex items-center justify-center z-10"
-        style={{ backgroundImage: `url('/1 (2).png')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        style={{ backgroundImage: `url('/1 (2).png')`, backgroundSize: 'cover', backgroundPosition: 'center', animation: 'zoom-in-out 8s ease-in-out infinite' }}>
         <div className="absolute inset-0 bg-gradient-to-r from-slate-50 via-blue-50/80 to-transparent" />
         <div className="w-full max-w-6xl mx-auto relative z-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 items-center">
