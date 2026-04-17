@@ -178,5 +178,6 @@ export default function AuthForm({
         </button>
       </p>
     </div>
+    </>
   );
 }

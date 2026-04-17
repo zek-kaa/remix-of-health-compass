@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { toast } from "sonner";
 import { Heart, Mail, Lock, User, ArrowRight } from "lucide-react";
+import LoginSuccess from "@/components/LoginSuccess";
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Auto-redirect if already authenticated
   useEffect(() => {
@@ -150,7 +152,7 @@ export default function Auth() {
           }
         }
 
-        toast.success(t('common.login') + "!");
+        setShowSuccess(true);
       }
     } catch (err: any) {
       toast.error(err.message);
@@ -171,6 +173,7 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      {showSuccess && <LoginSuccess message={t('common.login') + "!"} />}
       <div className="w-full max-w-sm space-y-6">
         {/* Logo */}
         <div className="text-center space-y-2">
