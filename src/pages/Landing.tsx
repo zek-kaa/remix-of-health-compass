@@ -166,14 +166,15 @@ export default function Landing() {
 
       {/* Modern Technology Section with full-width background */}
       <section className="relative py-12 sm:py-20 px-4 sm:px-6 z-10 overflow-hidden">
-        {/* Full-width background image */}
-        <div className="absolute inset-0 -z-10">
+        {/* Full-width background image with smooth zoom effect */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
           <img
             src="/2 (2).png"
             alt=""
             aria-hidden="true"
             loading="lazy"
             className="w-full h-full object-cover"
+            style={{ animation: 'zoom-in-out 8s ease-in-out infinite' }}
           />
           {/* Light themed gradient overlay - keeps image visible while ensuring text readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-slate-50/70 via-blue-50/40 to-transparent" />
