@@ -143,6 +143,51 @@ export type Database = {
           },
         ]
       }
+      daily_logs: {
+        Row: {
+          created_at: string
+          exercise_minutes: number | null
+          id: string
+          log_date: string
+          meals_logged: number | null
+          mood: string | null
+          notes: string | null
+          sleep_hours: number | null
+          stress_level: number | null
+          updated_at: string
+          user_id: string
+          water_glasses: number | null
+        }
+        Insert: {
+          created_at?: string
+          exercise_minutes?: number | null
+          id?: string
+          log_date?: string
+          meals_logged?: number | null
+          mood?: string | null
+          notes?: string | null
+          sleep_hours?: number | null
+          stress_level?: number | null
+          updated_at?: string
+          user_id: string
+          water_glasses?: number | null
+        }
+        Update: {
+          created_at?: string
+          exercise_minutes?: number | null
+          id?: string
+          log_date?: string
+          meals_logged?: number | null
+          mood?: string | null
+          notes?: string | null
+          sleep_hours?: number | null
+          stress_level?: number | null
+          updated_at?: string
+          user_id?: string
+          water_glasses?: number | null
+        }
+        Relationships: []
+      }
       health_entries: {
         Row: {
           created_at: string
@@ -323,6 +368,33 @@ export type Database = {
           id?: string
           phone?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      recommendations_shown: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          shown_date: string
+          tip_id: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          shown_date?: string
+          tip_id: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          shown_date?: string
+          tip_id?: string
           user_id?: string
         }
         Relationships: []
