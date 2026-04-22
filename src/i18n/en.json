@@ -148,6 +148,19 @@
     "view": "View",
     "resolve": "Resolve"
   },
+  "timeline": {
+    "heading": "Alerts & Reminders Timeline",
+    "events": "events",
+    "empty": "No alert activity yet",
+    "justNow": "just now",
+    "minAgo": "min ago",
+    "hrAgo": "h ago",
+    "kind": {
+      "created": "Created",
+      "updated": "Updated",
+      "resolved": "Resolved"
+    }
+  },
   "patient": {
     "welcome": "Welcome to MedFlow!",
     "subtitle": "This is your health dashboard. Start by adding your health measurements.",

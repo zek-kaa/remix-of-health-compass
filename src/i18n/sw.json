@@ -146,6 +146,19 @@
 "view": "Angalia",
 "resolve": "Suluhisha"
 },
+"timeline": {
+"heading": "Ratiba ya Arifa & Vikumbusho",
+"events": "matukio",
+"empty": "Bado hakuna shughuli za arifa",
+"justNow": "sasa hivi",
+"minAgo": "dk zilizopita",
+"hrAgo": "saa zilizopita",
+"kind": {
+"created": "Imeundwa",
+"updated": "Imesasishwa",
+"resolved": "Imesuluhishwa"
+}
+},
 "patient": {
 "welcome": "Karibu kwenye AfyaCompass!",
 "subtitle": "Hii ni dashboard yako ya afya. Anza kwa kuongeza vipimo vyako vya afya.",
