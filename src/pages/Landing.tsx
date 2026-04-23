@@ -318,17 +318,47 @@ export default function Landing() {
       {/* CTA Section */}
       <section className="relative py-12 sm:py-24 px-4 sm:px-6 z-10">
         <div className="max-w-4xl mx-auto">
-          <div className="relative rounded-3xl border border-white/60 bg-gradient-to-br from-blue-100/40 via-white/40 to-slate-100/40 backdrop-blur-xl overflow-hidden animate-fade-in-up glassmorphic-cta">
-            <div className="absolute -top-32 -right-32 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl opacity-50" />
-            <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-slate-400/20 rounded-full blur-3xl opacity-50" />
+          <div
+            className="group relative rounded-3xl overflow-hidden animate-fade-in-up transition-all duration-500 hover:-translate-y-1"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.18) 100%)",
+              backdropFilter: "blur(28px) saturate(180%)",
+              WebkitBackdropFilter: "blur(28px) saturate(180%)",
+              border: "1px solid rgba(255,255,255,0.45)",
+              boxShadow:
+                "0 20px 60px -15px rgba(31, 70, 130, 0.25), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(255,255,255,0.15)",
+            }}
+          >
+            {/* Glass refraction highlights */}
+            <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-b from-white/40 via-transparent to-transparent opacity-70" />
+            <div className="pointer-events-none absolute -top-1/2 -left-1/3 w-[160%] h-full rotate-12 bg-gradient-to-r from-transparent via-white/30 to-transparent blur-2xl opacity-60" />
+            <div className="pointer-events-none absolute -top-32 -right-32 w-64 h-64 bg-blue-400/25 rounded-full blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-32 -left-32 w-64 h-64 bg-slate-300/25 rounded-full blur-3xl" />
+            {/* Shine sweep on hover */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
+              <div className="absolute -inset-y-10 -left-1/3 w-1/3 rotate-12 bg-gradient-to-r from-transparent via-white/50 to-transparent blur-md opacity-0 group-hover:opacity-100 group-hover:translate-x-[400%] transition-all duration-1000 ease-out" />
+            </div>
+
             <div className="relative p-8 sm:p-12 lg:p-16 text-center space-y-6 sm:space-y-8">
               <div>
-                <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-3 sm:mb-4">{t('landing.startToday')}</h2>
-                <p className="text-sm sm:text-lg text-slate-600 max-w-2xl mx-auto">{t('landing.ctaDesc')}</p>
+                <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-3 sm:mb-4 drop-shadow-sm">{t('landing.startToday')}</h2>
+                <p className="text-sm sm:text-lg text-slate-700 max-w-2xl mx-auto">{t('landing.ctaDesc')}</p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-2 sm:pt-4">
                 <LoginDropdown variant="cta" />
-                <button className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl bg-white/40 text-slate-900 border border-white/60 font-semibold hover:bg-white/60 transition-all backdrop-blur-md neumorphic-button">
+                <button
+                  className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl text-slate-900 font-semibold transition-all hover:-translate-y-0.5"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0.15))",
+                    backdropFilter: "blur(16px) saturate(160%)",
+                    WebkitBackdropFilter: "blur(16px) saturate(160%)",
+                    border: "1px solid rgba(255,255,255,0.55)",
+                    boxShadow:
+                      "0 8px 24px -8px rgba(31, 70, 130, 0.2), inset 0 1px 0 rgba(255,255,255,0.6)",
+                  }}
+                >
                   {t('landing.qualitySummary')}
                 </button>
               </div>
