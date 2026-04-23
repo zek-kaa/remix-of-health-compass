@@ -37,12 +37,28 @@ export default function AboutAfyaSection() {
       const totalStates = SLIDES.length * 2; // 6
       const transitions = totalStates - 1; // 5
 
-      // Initial state: only first sw visible
+      // Initial state: only first sw visible, others hidden below with rotation
       slides.forEach((slide, i) => {
         const sw = slide.querySelector<HTMLElement>(".layer-sw")!;
         const en = slide.querySelector<HTMLElement>(".layer-en")!;
-        gsap.set(sw, { autoAlpha: i === 0 ? 1 : 0, scale: i === 0 ? 1 : 0.92, y: i === 0 ? 0 : 40 });
-        gsap.set(en, { autoAlpha: 0, scale: 0.92, y: 40 });
+        gsap.set(sw, {
+          autoAlpha: i === 0 ? 1 : 0,
+          scale: i === 0 ? 1 : 0.85,
+          y: i === 0 ? 0 : 120,
+          rotateX: i === 0 ? 0 : -25,
+          rotateZ: i === 0 ? 0 : 8,
+          transformPerspective: 1000,
+          transformOrigin: "center bottom",
+        });
+        gsap.set(en, {
+          autoAlpha: 0,
+          scale: 0.85,
+          y: 120,
+          rotateX: -25,
+          rotateZ: -8,
+          transformPerspective: 1000,
+          transformOrigin: "center bottom",
+        });
       });
 
       const tl = gsap.timeline({
@@ -83,16 +99,30 @@ export default function AboutAfyaSection() {
         const sw = slide.querySelector<HTMLElement>(".layer-sw")!;
         const en = slide.querySelector<HTMLElement>(".layer-en")!;
 
-        // Transition: sw[i] -> en[i]
-        tl.to(sw, { autoAlpha: 0, scale: 0.95, y: -30, duration: dur, ease: eases }, "+=0")
-          .to(en, { autoAlpha: 1, scale: 1, y: 0, duration: dur, ease: eases }, "<");
+        // Transition: sw[i] -> en[i] (sw rotates out upward, en rises from bottom with rotation)
+        tl.to(
+          sw,
+          { autoAlpha: 0, scale: 0.85, y: -120, rotateX: 25, rotateZ: -8, duration: dur, ease: eases },
+          "+=0"
+        ).to(
+          en,
+          { autoAlpha: 1, scale: 1, y: 0, rotateX: 0, rotateZ: 0, duration: dur, ease: eases },
+          "<"
+        );
 
         // Transition: en[i] -> sw[i+1] (if not last)
         if (i < SLIDES.length - 1) {
           const next = slides[i + 1];
           const nextSw = next.querySelector<HTMLElement>(".layer-sw")!;
-          tl.to(en, { autoAlpha: 0, scale: 0.95, y: -30, duration: dur, ease: eases }, "+=0.3")
-            .to(nextSw, { autoAlpha: 1, scale: 1, y: 0, duration: dur, ease: eases }, "<");
+          tl.to(
+            en,
+            { autoAlpha: 0, scale: 0.85, y: -120, rotateX: 25, rotateZ: 8, duration: dur, ease: eases },
+            "+=0.3"
+          ).to(
+            nextSw,
+            { autoAlpha: 1, scale: 1, y: 0, rotateX: 0, rotateZ: 0, duration: dur, ease: eases },
+            "<"
+          );
         }
       }
 
