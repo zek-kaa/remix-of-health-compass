@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/useI18n";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import LoginDropdown from "@/components/LoginDropdown";
+import AboutAfyaSection from "@/components/sections/AboutAfyaSection";
 
 interface PhonePosition {
   rotateX: number;
@@ -260,6 +261,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* About Afya Compass — Pinned scroll-driven bilingual showcase */}
+      <AboutAfyaSection />
 
       {/* Modern Technology Section with full-width background */}
       <section className="relative py-12 sm:py-20 px-4 sm:px-6 z-10 overflow-hidden">
