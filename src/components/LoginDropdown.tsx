@@ -10,8 +10,14 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, User2, Mail, Heart } from "lucide-react";
+import { LogOut, User2, Heart } from "lucide-react";
 import AuthForm from "./AuthForm";
+
+const displayUsername = (email?: string | null) => {
+  if (!email) return "";
+  // Strip internal @app.local domain so users only see the username
+  return email.replace(/@app\.local$/i, "");
+};
 
 export default function LoginDropdown({ 
   className = "",
@@ -76,8 +82,8 @@ export default function LoginDropdown({
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-semibold text-sm">{profile?.full_name || user.email}</p>
-                <p className="text-xs text-muted-foreground truncate max-w-[180px]">{user.email}</p>
+                <p className="font-semibold text-sm">{profile?.full_name || displayUsername(user.email)}</p>
+                <p className="text-xs text-muted-foreground truncate max-w-[180px]">@{displayUsername(user.email)}</p>
               </div>
             </div>
           </div>
