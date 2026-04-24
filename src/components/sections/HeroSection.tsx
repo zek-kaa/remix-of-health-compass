@@ -1,9 +1,10 @@
-import { Heart, Users, AlertTriangle, Bell, Calendar, Sparkles } from "lucide-react";
+import { Heart, Users, AlertTriangle, Bell, Calendar, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useStats, useAppointments } from "@/hooks/use-data";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/useI18n";
 import { getDateLocale } from "@/lib/i18n-utils";
+import { useTypingSound } from "@/hooks/useTypingSound";
 
 export function HeroSection() {
   const { profile } = useAuth();
@@ -15,18 +16,36 @@ export function HeroSection() {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? t('dashboard.greetingMorning') : hour < 17 ? t('dashboard.greetingAfternoon') : t('dashboard.greetingEvening');
 
-  // Typewriter effect for greeting
+  // Soft procedural typing sound (Web Audio API). Respects browser autoplay
+  // policy — only plays after the first user interaction.
+  const { playTick, muted, toggleMute } = useTypingSound();
+
+  // Typewriter effect for greeting (with synced sound per character)
   const [typed, setTyped] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   useEffect(() => {
     setTyped("");
+    setIsTyping(true);
     let i = 0;
     const interval = setInterval(() => {
       i++;
       setTyped(greeting.slice(0, i));
-      if (i >= greeting.length) clearInterval(interval);
-    }, 70);
-    return () => clearInterval(interval);
-  }, [greeting]);
+      // Skip ticks for whitespace so it sounds natural
+      const ch = greeting.charAt(i - 1);
+      if (ch && ch.trim().length > 0) {
+        playTick();
+      }
+      if (i >= greeting.length) {
+        clearInterval(interval);
+        setIsTyping(false); // stop sound trigger when done
+      }
+    }, 75 + Math.floor(Math.random() * 25)); // slight irregularity
+    return () => {
+      clearInterval(interval);
+      setIsTyping(false);
+    };
+  }, [greeting, playTick]);
+
 
   const cards = [
     { label: t('dashboard.patients'), value: stats?.totalPatients ?? "—", icon: Users, color: "bg-primary/10 text-primary" },
