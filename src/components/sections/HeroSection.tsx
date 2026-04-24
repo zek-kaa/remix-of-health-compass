@@ -1,9 +1,10 @@
-import { Heart, Users, AlertTriangle, Bell, Calendar, Sparkles } from "lucide-react";
+import { Heart, Users, AlertTriangle, Bell, Calendar, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useStats, useAppointments } from "@/hooks/use-data";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/useI18n";
 import { getDateLocale } from "@/lib/i18n-utils";
+import { useTypingSound } from "@/hooks/useTypingSound";
 
 export function HeroSection() {
   const { profile } = useAuth();
@@ -15,18 +16,36 @@ export function HeroSection() {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? t('dashboard.greetingMorning') : hour < 17 ? t('dashboard.greetingAfternoon') : t('dashboard.greetingEvening');
 
-  // Typewriter effect for greeting
+  // Soft procedural typing sound (Web Audio API). Respects browser autoplay
+  // policy — only plays after the first user interaction.
+  const { playTick, muted, toggleMute } = useTypingSound();
+
+  // Typewriter effect for greeting (with synced sound per character)
   const [typed, setTyped] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   useEffect(() => {
     setTyped("");
+    setIsTyping(true);
     let i = 0;
     const interval = setInterval(() => {
       i++;
       setTyped(greeting.slice(0, i));
-      if (i >= greeting.length) clearInterval(interval);
-    }, 70);
-    return () => clearInterval(interval);
-  }, [greeting]);
+      // Skip ticks for whitespace so it sounds natural
+      const ch = greeting.charAt(i - 1);
+      if (ch && ch.trim().length > 0) {
+        playTick();
+      }
+      if (i >= greeting.length) {
+        clearInterval(interval);
+        setIsTyping(false); // stop sound trigger when done
+      }
+    }, 75 + Math.floor(Math.random() * 25)); // slight irregularity
+    return () => {
+      clearInterval(interval);
+      setIsTyping(false);
+    };
+  }, [greeting, playTick]);
+
 
   const cards = [
     { label: t('dashboard.patients'), value: stats?.totalPatients ?? "—", icon: Users, color: "bg-primary/10 text-primary" },
@@ -47,12 +66,23 @@ export function HeroSection() {
           <h1 className="text-3xl font-extrabold text-foreground mt-4 leading-tight min-h-[2.5rem]">
             {typed}
             <span
-              className="inline-block w-[3px] h-7 ml-1 align-middle bg-primary animate-pulse"
+              className={`inline-block w-[3px] h-7 ml-1 align-middle bg-primary ${isTyping ? 'animate-pulse' : 'animate-cursor-blink'}`}
               aria-hidden="true"
             />
           </h1>
           <Sparkles className="h-7 w-7 text-primary mt-4 pulse-glow" />
+          <button
+            type="button"
+            onClick={toggleMute}
+            aria-label={muted ? "Unmute typing sound" : "Mute typing sound"}
+            aria-pressed={muted}
+            title={muted ? "Unmute typing sound" : "Mute typing sound"}
+            className="ml-auto mt-4 h-8 w-8 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex items-center justify-center transition-all press-zoom border border-primary/20 backdrop-blur-sm"
+          >
+            {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+          </button>
         </div>
+
         <p className="text-sm text-muted-foreground mt-2 scroll-fade-in" style={{ animationDelay: "200ms" }}>
           {profile?.full_name ? `${profile.full_name}, ` : ""}{t('dashboard.yourSummary')}
         </p>
