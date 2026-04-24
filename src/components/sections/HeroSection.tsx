@@ -66,12 +66,23 @@ export function HeroSection() {
           <h1 className="text-3xl font-extrabold text-foreground mt-4 leading-tight min-h-[2.5rem]">
             {typed}
             <span
-              className="inline-block w-[3px] h-7 ml-1 align-middle bg-primary animate-pulse"
+              className={`inline-block w-[3px] h-7 ml-1 align-middle bg-primary ${isTyping ? 'animate-pulse' : 'animate-cursor-blink'}`}
               aria-hidden="true"
             />
           </h1>
           <Sparkles className="h-7 w-7 text-primary mt-4 pulse-glow" />
+          <button
+            type="button"
+            onClick={toggleMute}
+            aria-label={muted ? "Unmute typing sound" : "Mute typing sound"}
+            aria-pressed={muted}
+            title={muted ? "Unmute typing sound" : "Mute typing sound"}
+            className="ml-auto mt-4 h-8 w-8 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex items-center justify-center transition-all press-zoom border border-primary/20 backdrop-blur-sm"
+          >
+            {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+          </button>
         </div>
+
         <p className="text-sm text-muted-foreground mt-2 scroll-fade-in" style={{ animationDelay: "200ms" }}>
           {profile?.full_name ? `${profile.full_name}, ` : ""}{t('dashboard.yourSummary')}
         </p>
