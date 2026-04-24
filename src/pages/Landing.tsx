@@ -23,15 +23,8 @@ export default function Landing() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [expandedFeature, setExpandedFeature] = useState<number | null>(null);
 
-  // Lock body scroll when feature panel is open
-  useEffect(() => {
-    if (expandedFeature !== null) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
-  }, [expandedFeature]);
+  // (No body scroll lock — cards expand inline as accordions)
+
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
