@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Heart, ArrowRight, Users, Zap, Shield, BarChart3, Bell, TrendingUp, Activity, Stethoscope, X, CheckCircle2 } from "lucide-react";
+import { Heart, ArrowRight, Users, BarChart3, Bell, Activity, Stethoscope } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
