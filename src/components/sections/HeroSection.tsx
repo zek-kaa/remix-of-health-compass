@@ -20,31 +20,62 @@ export function HeroSection() {
   // policy — only plays after the first user interaction.
   const { playTick, muted, toggleMute } = useTypingSound();
 
-  // Typewriter effect for greeting (with synced sound per character)
+  // Looping typewriter: type → pause → erase → pause → repeat
   const [typed, setTyped] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+
+  // Keep latest playTick in a ref so the loop effect doesn't re-run each render
+  const playTickRef = useRef(playTick);
   useEffect(() => {
+    playTickRef.current = playTick;
+  }, [playTick]);
+
+  useEffect(() => {
+    if (!greeting) return;
+    let cancelled = false;
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const TYPE_SPEED = 85;          // ms per character (typing)
+    const ERASE_SPEED = 45;         // ms per character (erasing — faster)
+    const PAUSE_AFTER_TYPE = 1600;  // pause when fully typed
+    const PAUSE_AFTER_ERASE = 500;  // pause when fully erased
+
+    const typeForward = (i: number) => {
+      if (cancelled) return;
+      setTyped(greeting.slice(0, i));
+      const ch = greeting.charAt(i - 1);
+      if (ch && ch.trim().length > 0) playTickRef.current();
+      if (i >= greeting.length) {
+        setIsTyping(false);
+        timeoutId = setTimeout(() => eraseBackward(greeting.length), PAUSE_AFTER_TYPE);
+        return;
+      }
+      const jitter = TYPE_SPEED + Math.floor(Math.random() * 40);
+      timeoutId = setTimeout(() => typeForward(i + 1), jitter);
+    };
+
+    const eraseBackward = (i: number) => {
+      if (cancelled) return;
+      setTyped(greeting.slice(0, i));
+      if (i <= 0) {
+        timeoutId = setTimeout(() => {
+          setIsTyping(true);
+          typeForward(1);
+        }, PAUSE_AFTER_ERASE);
+        return;
+      }
+      timeoutId = setTimeout(() => eraseBackward(i - 1), ERASE_SPEED);
+    };
+
     setTyped("");
     setIsTyping(true);
-    let i = 0;
-    const interval = setInterval(() => {
-      i++;
-      setTyped(greeting.slice(0, i));
-      // Skip ticks for whitespace so it sounds natural
-      const ch = greeting.charAt(i - 1);
-      if (ch && ch.trim().length > 0) {
-        playTick();
-      }
-      if (i >= greeting.length) {
-        clearInterval(interval);
-        setIsTyping(false); // stop sound trigger when done
-      }
-    }, 75 + Math.floor(Math.random() * 25)); // slight irregularity
+    timeoutId = setTimeout(() => typeForward(1), 200);
+
     return () => {
-      clearInterval(interval);
-      setIsTyping(false);
+      cancelled = true;
+      clearTimeout(timeoutId);
     };
-  }, [greeting, playTick]);
+  }, [greeting]);
 
 
   const cards = [
