@@ -19,9 +19,9 @@ import { RecommendationsCard } from "@/components/health/RecommendationsCard";
 import { QuickStatsGrid } from "@/components/health/QuickStatsGrid";
 import { computeHealthScore, generateSmartAlerts, generateRecommendations } from "@/lib/health-score";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { HeartPulse, Users, Bell, LogOut, LayoutDashboard, Calculator, BarChart, Activity, ArrowRight, X, PlusCircle, AlertCircle } from "lucide-react";
+import { HeartPulse, LogOut, LayoutDashboard, Calculator, BarChart, Activity, ArrowRight, X, PlusCircle, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart as RechartsBarChart, Bar } from "recharts";
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart as RechartsBarChart, Bar, ResponsiveContainer, Legend } from "recharts";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import {
   classifyBloodPressure,
@@ -106,18 +106,24 @@ export default function PatientDashboard() {
     setManualHeartRate(latestEntry.heart_rate);
   }, [latestEntry]);
 
-  const patientAlerts = alertsData.filter((a: DbAlert) => a.patient_id === patientId && !a.resolved);
   const patientAlertsAll = alertsData.filter((a: DbAlert) => a.patient_id === patientId);
-  const highRisk = patient?.risk_level === "high" ? 1 : 0;
 
   const insightData = useMemo(() => {
     if (!healthEntries.length) return [];
-    return [...healthEntries].reverse().map((entry) => ({
-      label: new Date(entry.created_at).toLocaleDateString(getDateLocale(lang), { weekday: "short" }),
-      systolic: entry.systolic,
-      diastolic: entry.diastolic,
-      weight: entry.weight,
-    }));
+    // healthEntries comes back ordered DESC by created_at; reverse to chronological for charts
+    return [...healthEntries]
+      .slice(0, 14)
+      .reverse()
+      .map((entry) => ({
+        label: new Date(entry.recorded_date ?? entry.created_at).toLocaleDateString(getDateLocale(lang), {
+          day: "numeric",
+          month: "short",
+        }),
+        systolic: entry.systolic,
+        diastolic: entry.diastolic,
+        heartRate: entry.heart_rate,
+        weight: Number(entry.weight),
+      }));
   }, [healthEntries, lang]);
 
   const bmiValue = useMemo(() => {
@@ -152,11 +158,6 @@ export default function PatientDashboard() {
     setShowOverlay(true);
   };
 
-  const summaryCards = [
-    { label: t('patient.recordsLabel'), value: healthEntries.length, icon: Users, color: "text-primary" },
-    { label: t('patient.highRiskLabel'), value: highRisk, icon: Bell, color: "text-destructive" },
-    { label: t('alerts.title'), value: patientAlerts.length, icon: Bell, color: "text-warning" },
-  ];
 
   if (patientLoading) {
     return (
@@ -350,25 +351,6 @@ export default function PatientDashboard() {
             );
           })()}
 
-          {/* Summary Cards with premium styling and animations */}
-          <div className="grid grid-cols-3 gap-3 scroll-fade-in">
-            {summaryCards.map((s, idx) => (
-              <div key={s.label} className="scroll-scale-in group relative bg-gradient-to-br from-card/90 via-card/85 to-card/80 frosted-glass rounded-2xl border border-primary/25 md:border-primary/20 backdrop-blur-md p-3 text-center transition-all duration-500 ease-out shadow-soft md:shadow-sm md:hover:-translate-y-1.5 md:hover:scale-[1.05] md:hover:border-primary/40 md:hover:shadow-elevated press-zoom overflow-hidden" style={{ animationDelay: `${idx * 100}ms` }}>
-                {/* Gradient overlay on hover */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-md" />
-                {/* Shine effect */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-700">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                </div>
-                <div className="relative z-10">
-                  <s.icon className={`h-5 w-5 mx-auto ${s.color} group-hover:scale-110 transition-transform duration-500`} />
-                  <p className="text-xl font-bold mt-1 text-foreground group-hover:text-primary transition-colors duration-500">{s.value}</p>
-                  <p className="text-[10px] text-muted-foreground group-hover:text-muted-foreground/80 transition-colors duration-500">{s.label}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
           {/* Action Buttons with premium gradients and effects */}
           <div className="grid gap-4 sm:grid-cols-2">
             <button type="button" onClick={() => handlePanelToggle("add-data")} className="group scroll-fade-in relative rounded-3xl frosted-glass border border-primary/25 md:border-primary/20 bg-gradient-to-br from-card/80 via-card/70 to-card/60 backdrop-blur-md p-4 text-left transition-all duration-500 ease-out shadow-soft md:shadow-sm md:hover:-translate-y-1.5 md:hover:scale-[1.03] md:hover:border-primary/40 md:hover:shadow-elevated press-zoom overflow-hidden">
@@ -449,33 +431,60 @@ export default function PatientDashboard() {
               {activeFeature === "insights" && (
                 <div className="space-y-5 py-4 animate-fade-in">
                   {insightData.length === 0 ? (
-                     <div className="text-center py-12 text-muted-foreground text-sm">
-                       <BarChart className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                       {t('patient.noInsightData')}
-                     </div>
+                    <div className="text-center py-12 px-4 text-muted-foreground text-sm rounded-2xl border border-dashed border-border/60 bg-card/30">
+                      <BarChart className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                      <p className="font-medium text-foreground mb-1">{t('patient.noInsightData')}</p>
+                      <p className="text-xs">{t('patient.noInsightHint') !== 'patient.noInsightHint' ? t('patient.noInsightHint') : ''}</p>
+                      <Button
+                        size="sm"
+                        className="mt-4 rounded-xl"
+                        onClick={() => { setActiveFeature("add-data"); }}
+                      >
+                        <PlusCircle className="h-4 w-4 mr-1.5" />
+                        {t('patient.addData')}
+                      </Button>
+                    </div>
                   ) : (
                     <div className="grid gap-5 lg:grid-cols-2">
                       <ChartCard title={t('patient.bpChart')} description={t('patient.bpChartDesc')}>
-                        <div className="h-64">
-                          <LineChart data={insightData}>
-                            <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" />
-                            <XAxis dataKey="label" stroke="#94a3b8" />
-                            <YAxis stroke="#94a3b8" />
-                            <Tooltip />
-                            <Line type="monotone" dataKey="systolic" stroke="#2563eb" strokeWidth={2} dot />
-                            <Line type="monotone" dataKey="diastolic" stroke="#f59e0b" strokeWidth={2} dot />
-                          </LineChart>
+                        <div className="h-64 w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={insightData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                              <CartesianGrid strokeDasharray="4 4" stroke="hsl(var(--border))" />
+                              <XAxis dataKey="label" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                              <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 12 }} />
+                              <Legend wrapperStyle={{ fontSize: 11 }} />
+                              <Line type="monotone" dataKey="systolic" name="Systolic" stroke="hsl(var(--primary))" strokeWidth={2} dot />
+                              <Line type="monotone" dataKey="diastolic" name="Diastolic" stroke="hsl(var(--warning))" strokeWidth={2} dot />
+                            </LineChart>
+                          </ResponsiveContainer>
                         </div>
                       </ChartCard>
                       <ChartCard title={t('patient.weightChart')} description={t('patient.weightChartDesc')}>
-                        <div className="h-64">
-                          <RechartsBarChart data={insightData}>
-                            <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" />
-                            <XAxis dataKey="label" stroke="#94a3b8" />
-                            <YAxis stroke="#94a3b8" />
-                            <Tooltip />
-                            <Bar dataKey="weight" fill="#22c55e" radius={[8, 8, 0, 0]} />
-                          </RechartsBarChart>
+                        <div className="h-64 w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <RechartsBarChart data={insightData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                              <CartesianGrid strokeDasharray="4 4" stroke="hsl(var(--border))" />
+                              <XAxis dataKey="label" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                              <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 12 }} />
+                              <Bar dataKey="weight" fill="hsl(var(--success))" radius={[8, 8, 0, 0]} />
+                            </RechartsBarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </ChartCard>
+                      <ChartCard title={t('patient.heartRateTitle')} description={t('patient.heartRateDesc')}>
+                        <div className="h-64 w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={insightData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                              <CartesianGrid strokeDasharray="4 4" stroke="hsl(var(--border))" />
+                              <XAxis dataKey="label" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                              <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 12 }} />
+                              <Line type="monotone" dataKey="heartRate" name="BPM" stroke="hsl(var(--destructive))" strokeWidth={2} dot />
+                            </LineChart>
+                          </ResponsiveContainer>
                         </div>
                       </ChartCard>
                     </div>
