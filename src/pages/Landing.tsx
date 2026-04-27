@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Heart, ArrowRight, Users, BarChart3, Bell, Activity, Stethoscope } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/useI18n";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import LoginDropdown from "@/components/LoginDropdown";
+import confetti from "canvas-confetti";
 import AboutAfyaSection from "@/components/sections/AboutAfyaSection";
 import FeaturesShowcaseSection from "@/components/sections/FeaturesShowcaseSection";
 import { ExpandableFeatureCard } from "@/components/landing/ExpandableFeatureCard";
@@ -23,7 +24,138 @@ export default function Landing() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [expandedFeature, setExpandedFeature] = useState<number | null>(null);
 
+  // Typewriter state for hero heading + description
+  const heading1 = t('landing.heading1');
+  const heading2 = t('landing.heading2');
+  const description = t('landing.description');
+  const [typedH1, setTypedH1] = useState("");
+  const [typedH2, setTypedH2] = useState("");
+  const [typedDesc, setTypedDesc] = useState("");
+  const [typingPhase, setTypingPhase] = useState<"h1" | "h2" | "desc" | "done">("h1");
+  const [hasExploded, setHasExploded] = useState(false);
+  const ctaWrapperRef = useRef<HTMLDivElement>(null);
+  const navLoginRef = useRef<HTMLDivElement>(null);
+
   // (No body scroll lock — cards expand inline as accordions)
+
+  // Fire a colorful confetti burst that flies toward the login button(s)
+  const fireConfettiToLogin = useCallback(() => {
+    const colors = [
+      "#3b82f6", "#06b6d4", "#8b5cf6", "#ec4899",
+      "#f59e0b", "#10b981", "#ef4444", "#fbbf24",
+    ];
+
+    const targets: HTMLElement[] = [];
+    if (ctaWrapperRef.current) targets.push(ctaWrapperRef.current);
+    if (navLoginRef.current) targets.push(navLoginRef.current);
+    if (targets.length === 0) return;
+
+    targets.forEach((el, idx) => {
+      const rect = el.getBoundingClientRect();
+      const x = (rect.left + rect.width / 2) / window.innerWidth;
+      const y = (rect.top + rect.height / 2) / window.innerHeight;
+
+      // Big main burst arriving at the login button
+      confetti({
+        particleCount: 140,
+        spread: 360,
+        startVelocity: 45,
+        ticks: 200,
+        gravity: 0.9,
+        scalar: 1.1,
+        origin: { x, y },
+        colors,
+        zIndex: 10000,
+        shapes: ["circle", "square"],
+      });
+
+      // Secondary sparkle ring
+      setTimeout(() => {
+        confetti({
+          particleCount: 80,
+          spread: 120,
+          startVelocity: 28,
+          gravity: 0.6,
+          scalar: 0.8,
+          origin: { x, y },
+          colors,
+          zIndex: 10000,
+          shapes: ["star"],
+        });
+      }, 180 + idx * 80);
+
+      // Streamers shooting upward from the button
+      setTimeout(() => {
+        confetti({
+          particleCount: 40,
+          angle: 90,
+          spread: 70,
+          startVelocity: 60,
+          gravity: 1.1,
+          ticks: 220,
+          origin: { x, y: y + 0.02 },
+          colors,
+          zIndex: 10000,
+        });
+      }, 280 + idx * 80);
+    });
+  }, []);
+
+  // Sequential typewriter: heading1 → heading2 → description → confetti
+  useEffect(() => {
+    const TYPE_SPEED = 55;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const typeText = (text: string, setter: (s: string) => void, onDone: () => void) => {
+      let i = 0;
+      const tick = () => {
+        if (cancelled) return;
+        i++;
+        setter(text.slice(0, i));
+        if (i >= text.length) {
+          timer = setTimeout(onDone, 280);
+          return;
+        }
+        const jitter = TYPE_SPEED + Math.floor(Math.random() * 40);
+        timer = setTimeout(tick, jitter);
+      };
+      timer = setTimeout(tick, TYPE_SPEED);
+    };
+
+    setTypedH1("");
+    setTypedH2("");
+    setTypedDesc("");
+    setHasExploded(false);
+    setTypingPhase("h1");
+
+    timer = setTimeout(() => {
+      typeText(heading1, setTypedH1, () => {
+        setTypingPhase("h2");
+        typeText(heading2, setTypedH2, () => {
+          setTypingPhase("desc");
+          typeText(description, setTypedDesc, () => {
+            setTypingPhase("done");
+          });
+        });
+      });
+    }, 400);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [heading1, heading2, description]);
+
+  // Trigger confetti once typing finishes
+  useEffect(() => {
+    if (typingPhase === "done" && !hasExploded) {
+      setHasExploded(true);
+      // Slight delay so user sees the completed text first
+      const t = setTimeout(() => fireConfettiToLogin(), 250);
+      return () => clearTimeout(t);
+    }
+  }, [typingPhase, hasExploded, fireConfettiToLogin]);
 
 
   useEffect(() => {
@@ -66,7 +198,9 @@ export default function Landing() {
           </div>
           <div className="flex items-center gap-2">
             <LanguageToggle />
-            <LoginDropdown />
+            <div ref={navLoginRef}>
+              <LoginDropdown />
+            </div>
           </div>
         </div>
       </nav>
@@ -97,13 +231,28 @@ export default function Landing() {
                   </span>
                 </div>
                 <div className="space-y-3 sm:space-y-4">
-                  <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-tight text-slate-900">
-                    {t('landing.heading1')}
-                    <span className="block bg-gradient-to-r from-blue-600 via-blue-500 to-slate-600 bg-clip-text text-transparent animate-gradient"> {t('landing.heading2')}</span>
+                  <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-tight text-slate-900 min-h-[3.5rem] sm:min-h-[7rem]">
+                    {typedH1}
+                    {typingPhase === "h1" && (
+                      <span className="inline-block w-[3px] h-7 sm:h-10 ml-1 align-middle bg-blue-600 animate-pulse" aria-hidden="true" />
+                    )}
+                    {(typingPhase === "h2" || typingPhase === "desc" || typingPhase === "done") && (
+                      <span className="block bg-gradient-to-r from-blue-600 via-blue-500 to-slate-600 bg-clip-text text-transparent animate-gradient">
+                        {" "}{typedH2}
+                        {typingPhase === "h2" && (
+                          <span className="inline-block w-[3px] h-7 sm:h-10 ml-1 align-middle bg-blue-600 animate-pulse [-webkit-text-fill-color:initial]" aria-hidden="true" />
+                        )}
+                      </span>
+                    )}
                   </h1>
-                  <p className="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-lg">{t('landing.description')}</p>
+                  <p className="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-lg min-h-[3rem]">
+                    {typedDesc}
+                    {typingPhase === "desc" && (
+                      <span className="inline-block w-[2px] h-4 ml-1 align-middle bg-blue-600 animate-pulse" aria-hidden="true" />
+                    )}
+                  </p>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3 pt-2 sm:pt-4">
+                <div ref={ctaWrapperRef} className="flex flex-col sm:flex-row gap-3 pt-2 sm:pt-4">
                   <LoginDropdown variant="cta" className="w-full sm:w-auto" />
                 </div>
                 <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-6 sm:pt-8 border-t border-slate-200/50 animate-fade-in" style={{ animationDelay: "200ms" }}>
