@@ -231,13 +231,28 @@ export default function Landing() {
                   </span>
                 </div>
                 <div className="space-y-3 sm:space-y-4">
-                  <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-tight text-slate-900">
-                    {t('landing.heading1')}
-                    <span className="block bg-gradient-to-r from-blue-600 via-blue-500 to-slate-600 bg-clip-text text-transparent animate-gradient"> {t('landing.heading2')}</span>
+                  <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-tight text-slate-900 min-h-[3.5rem] sm:min-h-[7rem]">
+                    {typedH1}
+                    {typingPhase === "h1" && (
+                      <span className="inline-block w-[3px] h-7 sm:h-10 ml-1 align-middle bg-blue-600 animate-pulse" aria-hidden="true" />
+                    )}
+                    {(typingPhase === "h2" || typingPhase === "desc" || typingPhase === "done") && (
+                      <span className="block bg-gradient-to-r from-blue-600 via-blue-500 to-slate-600 bg-clip-text text-transparent animate-gradient">
+                        {" "}{typedH2}
+                        {typingPhase === "h2" && (
+                          <span className="inline-block w-[3px] h-7 sm:h-10 ml-1 align-middle bg-blue-600 animate-pulse [-webkit-text-fill-color:initial]" aria-hidden="true" />
+                        )}
+                      </span>
+                    )}
                   </h1>
-                  <p className="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-lg">{t('landing.description')}</p>
+                  <p className="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-lg min-h-[3rem]">
+                    {typedDesc}
+                    {typingPhase === "desc" && (
+                      <span className="inline-block w-[2px] h-4 ml-1 align-middle bg-blue-600 animate-pulse" aria-hidden="true" />
+                    )}
+                  </p>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3 pt-2 sm:pt-4">
+                <div ref={ctaWrapperRef} className="flex flex-col sm:flex-row gap-3 pt-2 sm:pt-4">
                   <LoginDropdown variant="cta" className="w-full sm:w-auto" />
                 </div>
                 <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-6 sm:pt-8 border-t border-slate-200/50 animate-fade-in" style={{ animationDelay: "200ms" }}>
