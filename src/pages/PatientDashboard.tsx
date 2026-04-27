@@ -160,11 +160,6 @@ export default function PatientDashboard() {
     setShowOverlay(true);
   };
 
-  const summaryCards = [
-    { label: t('patient.recordsLabel'), value: healthEntries.length, icon: Users, color: "text-primary" },
-    { label: t('patient.highRiskLabel'), value: highRisk, icon: Bell, color: "text-destructive" },
-    { label: t('alerts.title'), value: patientAlerts.length, icon: Bell, color: "text-warning" },
-  ];
 
   if (patientLoading) {
     return (
