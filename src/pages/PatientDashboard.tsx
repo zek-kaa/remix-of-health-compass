@@ -112,12 +112,20 @@ export default function PatientDashboard() {
 
   const insightData = useMemo(() => {
     if (!healthEntries.length) return [];
-    return [...healthEntries].reverse().map((entry) => ({
-      label: new Date(entry.created_at).toLocaleDateString(getDateLocale(lang), { weekday: "short" }),
-      systolic: entry.systolic,
-      diastolic: entry.diastolic,
-      weight: entry.weight,
-    }));
+    // healthEntries comes back ordered DESC by created_at; reverse to chronological for charts
+    return [...healthEntries]
+      .slice(0, 14)
+      .reverse()
+      .map((entry) => ({
+        label: new Date(entry.recorded_date ?? entry.created_at).toLocaleDateString(getDateLocale(lang), {
+          day: "numeric",
+          month: "short",
+        }),
+        systolic: entry.systolic,
+        diastolic: entry.diastolic,
+        heartRate: entry.heart_rate,
+        weight: Number(entry.weight),
+      }));
   }, [healthEntries, lang]);
 
   const bmiValue = useMemo(() => {
