@@ -21,7 +21,7 @@ import { computeHealthScore, generateSmartAlerts, generateRecommendations } from
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { HeartPulse, Users, Bell, LogOut, LayoutDashboard, Calculator, BarChart, Activity, ArrowRight, X, PlusCircle, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart as RechartsBarChart, Bar } from "recharts";
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart as RechartsBarChart, Bar, ResponsiveContainer, Legend } from "recharts";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 import {
   classifyBloodPressure,
