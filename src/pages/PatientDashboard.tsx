@@ -282,7 +282,7 @@ export default function PatientDashboard() {
               <>
                 {/* Required daily log banner — shown until today's log is filled */}
                 {!todayLog && (
-                  <div className="scroll-fade-in rounded-2xl border-2 border-warning/50 bg-gradient-to-br from-warning/15 via-warning/5 to-transparent p-4 shadow-soft animate-pulse-slow">
+                  <div className="scroll-fade-in rounded-2xl border-2 border-warning/50 bg-gradient-to-br from-warning/15 via-warning/5 to-transparent p-4 shadow-soft">
                     <div className="flex items-start gap-3">
                       <div className="h-10 w-10 rounded-xl bg-warning/20 flex items-center justify-center flex-shrink-0">
                         <AlertCircle className="h-5 w-5 text-warning" />
