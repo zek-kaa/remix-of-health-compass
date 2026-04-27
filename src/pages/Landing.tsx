@@ -198,7 +198,9 @@ export default function Landing() {
           </div>
           <div className="flex items-center gap-2">
             <LanguageToggle />
-            <LoginDropdown />
+            <div ref={navLoginRef}>
+              <LoginDropdown />
+            </div>
           </div>
         </div>
       </nav>
