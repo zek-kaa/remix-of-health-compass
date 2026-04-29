@@ -18,8 +18,11 @@ import { AlertsTimeline } from "@/components/health/AlertsTimeline";
 import { RecommendationsCard } from "@/components/health/RecommendationsCard";
 import { QuickStatsGrid } from "@/components/health/QuickStatsGrid";
 import { computeHealthScore, generateSmartAlerts, generateRecommendations } from "@/lib/health-score";
+import { AssessmentsHub } from "@/components/health/AssessmentsHub";
+import { CalorieCalculator } from "@/components/health/CalorieCalculator";
+import { InsightsTrends } from "@/components/health/InsightsTrends";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { HeartPulse, LogOut, LayoutDashboard, Calculator, BarChart, Activity, ArrowRight, X, PlusCircle, AlertCircle } from "lucide-react";
+import { HeartPulse, LogOut, LayoutDashboard, Calculator, BarChart, Activity, ArrowRight, X, PlusCircle, AlertCircle, ClipboardList } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart as RechartsBarChart, Bar, ResponsiveContainer, Legend } from "recharts";
 import { useScrollAnimation } from "@/hooks/use-scroll-animation";
@@ -36,7 +39,7 @@ const riskColor: Record<string, string> = {
   low: "bg-success/10 text-success border-success/20",
 };
 
-type PatientFeature = "summary" | "add-data" | "insights" | "calculators";
+type PatientFeature = "summary" | "add-data" | "insights" | "calculators" | "assessments";
 
 export default function PatientDashboard() {
   const { profile, user, signOut } = useAuth();
@@ -140,6 +143,7 @@ export default function PatientDashboard() {
     "add-data": t('overlay.addData'),
     "insights": t('overlay.insights'),
     "calculators": t('overlay.calculators'),
+    "assessments": t('overlay.assessments'),
   };
 
   const hasAbnormalVitals = latestEntry
