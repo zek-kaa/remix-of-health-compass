@@ -118,7 +118,8 @@
 "settings": "Mipangilio",
 "addData": "Ongeza Data ya Afya",
 "insights": "Mwenendo wa Afya",
-"calculators": "Zana za Afya"
+"calculators": "Zana za Afya",
+"assessments": "Tathmini ya Afya"
 },
 "settings": {
 "title": "Mipangilio",
@@ -203,7 +204,9 @@
 "height": "Urefu (cm)",
 "age": "Umri",
 "heartRate": "Mapigo",
-"heartRateLabel": "Mapigo"
+"heartRateLabel": "Mapigo",
+"assessmentsTitle": "Tathmini za Afya",
+"assessmentsDesc": "Pima hatari ya kisukari, moyo, msongo na zaidi."
 },
 "health": {
 "title": "Data ya Afya",
