@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { ChevronDown, CheckCircle2, type LucideIcon } from "lucide-react";
 
 interface ExpandableFeatureCardProps {
@@ -10,15 +10,10 @@ interface ExpandableFeatureCardProps {
   isOpen: boolean;
   onToggle: () => void;
   delay?: number;
+  stat?: string;
+  insight?: string;
 }
 
-/**
- * ExpandableFeatureCard
- * - Smooth accordion-style expand/collapse using max-height transition
- * - Typewriter effect on inner text triggered ONLY when opened
- * - Resets typed content fully when closed
- * - Subtle hover effects, soft shadow, rounded corners
- */
 export function ExpandableFeatureCard({
   icon: Icon,
   title,
@@ -28,14 +23,19 @@ export function ExpandableFeatureCard({
   isOpen,
   onToggle,
   delay = 0,
+  stat,
+  insight,
 }: ExpandableFeatureCardProps) {
   // Combine details into one continuous string for typing,
   // but keep them as separate lines via newline markers.
   const fullText = details.join("\n");
 
   const [typed, setTyped] = useState("");
+  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const frameRef = useRef<number | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [maxHeight, setMaxHeight] = useState("0px");
 
   // Typewriter effect — runs only when opened, resets when closed
@@ -75,29 +75,62 @@ export function ExpandableFeatureCard({
   useEffect(() => {
     if (!contentRef.current) return;
     if (isOpen) {
-      // Use scrollHeight + a generous buffer so growing typed text fits
       const update = () => {
         if (contentRef.current) {
           setMaxHeight(`${contentRef.current.scrollHeight + 40}px`);
         }
       };
       update();
-      // Re-measure as text grows
       const ro = new ResizeObserver(update);
       ro.observe(contentRef.current);
       return () => ro.disconnect();
-    } else {
-      setMaxHeight("0px");
     }
+    setMaxHeight("0px");
   }, [isOpen, typed]);
+
+  useEffect(() => {
+    return () => {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
+    };
+  }, []);
+
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+    const rotateY = (x - 0.5) * 12;
+    const rotateX = (0.5 - y) * 10;
+    if (frameRef.current) {
+      cancelAnimationFrame(frameRef.current);
+    }
+    frameRef.current = requestAnimationFrame(() => {
+      setTilt({ rotateX, rotateY });
+    });
+  };
+
+  const resetTilt = () => {
+    if (frameRef.current) {
+      cancelAnimationFrame(frameRef.current);
+    }
+    setTilt({ rotateX: 0, rotateY: 0 });
+  };
 
   const typedLines = typed.split("\n");
   const isTyping = isOpen && typed.length < fullText.length;
 
   return (
     <div
-      className="group relative animate-fade-in-up"
-      style={{ animationDelay: `${delay}ms` }}
+      ref={cardRef}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={resetTilt}
+      className="group relative scroll-reveal landing-card"
+      style={{
+        transitionDelay: `${delay}ms`,
+        transform: `perspective(1200px) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
+      }}
     >
       {/* Glow halo on hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-300/30 to-slate-300/30 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10" />
@@ -105,8 +138,8 @@ export function ExpandableFeatureCard({
       <div
         className={`relative rounded-3xl border bg-gradient-to-br from-white/80 to-slate-50/70 backdrop-blur-xl shadow-lg transition-all duration-500 ease-out overflow-hidden ${
           isOpen
-            ? "border-blue-400/60 shadow-2xl shadow-blue-500/10 -translate-y-0.5"
-            : "border-white/60 hover:border-blue-300/50 hover:shadow-2xl hover:-translate-y-1"
+            ? "border-blue-400/60 shadow-2xl shadow-blue-500/10"
+            : "border-white/60 hover:border-blue-300/50 hover:shadow-2xl"
         }`}
       >
         {/* Header (clickable) */}
@@ -118,19 +151,31 @@ export function ExpandableFeatureCard({
         >
           <div className="flex items-start gap-4">
             <div
-              className={`h-10 sm:h-12 w-10 sm:w-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shadow-md transition-transform duration-300 ${
+              className={`landing-card-icon h-10 sm:h-12 w-10 sm:w-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shadow-md transition-transform duration-300 ${
                 isOpen ? "scale-110 rotate-3" : "group-hover:scale-110"
               }`}
             >
               <Icon className="h-5 sm:h-6 w-5 sm:w-6 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1">
-                {title}
-              </h3>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                  {title}
+                </h3>
+                {stat ? (
+                  <span className="inline-flex items-center rounded-full bg-blue-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-blue-700">
+                    {stat}
+                  </span>
+                ) : null}
+              </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 {desc}
               </p>
+              {insight ? (
+                <p className="mt-2 text-[11px] uppercase tracking-[0.15em] text-slate-500">
+                  {insight}
+                </p>
+              ) : null}
             </div>
             <ChevronDown
               className={`h-5 w-5 text-blue-600 mt-1 shrink-0 transition-transform duration-500 ${

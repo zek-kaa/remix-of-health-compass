@@ -190,6 +190,33 @@
     animation: scroll-slide-top 0.6s ease-out forwards;
   }
 
+  .contact-curtain {
+    pointer-events: none;
+  }
+
+  .contact-curtain-panel {
+    width: 50%;
+    height: 100%;
+    background: var(--card);
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .contact-curtain-left {
+    transform: translateX(0);
+  }
+
+  .contact-curtain-right {
+    transform: translateX(0);
+  }
+
+  .contact-open .contact-curtain-left {
+    transform: translateX(-100%);
+  }
+
+  .contact-open .contact-curtain-right {
+    transform: translateX(100%);
+  }
+
   .scroll-fade-in.visible {
     opacity: 1;
     transform: translateY(0);
@@ -685,6 +712,59 @@
     animation: scale-up-enter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
 
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+    transition: opacity 0.75s ease-out, transform 0.75s ease-out;
+    will-change: opacity, transform;
+  }
+
+  .scroll-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .delay-0 {
+    transition-delay: 0s;
+  }
+
+  .delay-100 {
+    transition-delay: 0.1s;
+  }
+
+  .delay-200 {
+    transition-delay: 0.2s;
+  }
+
+  .delay-300 {
+    transition-delay: 0.3s;
+  }
+
+  .delay-400 {
+    transition-delay: 0.4s;
+  }
+
+  .delay-500 {
+    transition-delay: 0.5s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-reveal,
+    .animate-fade-in-up,
+    .animate-scale-up-enter,
+    .animate-fade-in,
+    .hover-lift,
+    .hover-scale-sm,
+    .animate-float,
+    .animate-float-slow,
+    .animate-zoom-in-out {
+      animation: none !important;
+      transition: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+    }
+  }
+
   /* ============ LANDING PAGE SPECIFIC ANIMATIONS ============ */
   @keyframes zoom-in-out {
     0%, 100% {
@@ -827,6 +907,127 @@
 
   .hover-tilt:hover {
     transform: rotateY(5deg) rotateX(5deg);
+  }
+
+  .landing-card {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    transition: transform 0.28s ease, box-shadow 0.28s ease, background 0.28s ease;
+  }
+
+  .landing-card:hover {
+    transform: translateY(-8px) scale(1.008);
+  }
+
+  .landing-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 1.5rem;
+    background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+  }
+
+  .landing-card:hover::before {
+    opacity: 1;
+  }
+
+  .landing-card-icon {
+    transition: transform 0.32s ease, box-shadow 0.32s ease;
+  }
+
+  .landing-card:hover .landing-card-icon {
+    transform: translateY(-2px) rotate(-2deg) scale(1.05);
+  }
+
+  .landing-mini-card {
+    min-width: 240px;
+    border-radius: 1.75rem;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+  }
+
+  .landing-mini-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.12);
+    border-color: rgba(56, 189, 248, 0.28);
+  }
+
+  .hero-hero-cards {
+    animation: hero-card-slide 18s linear infinite;
+    transform: translateX(0);
+  }
+
+  @keyframes hero-card-slide {
+    0% {
+      transform: translateX(-7%);
+    }
+    50% {
+      transform: translateX(7%);
+    }
+    100% {
+      transform: translateX(-7%);
+    }
+  }
+
+  .hero-hero-cards > div {
+    min-height: 132px;
+  }
+
+  @media (max-width: 640px) {
+    .hero-hero-cards {
+      animation-duration: 22s;
+    }
+  }
+
+  .landing-glow-strip {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg, rgba(56, 189, 248, 0.12), transparent 35%, rgba(59, 130, 246, 0.08));
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .landing-mini-card:hover .landing-glow-strip {
+    opacity: 1;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  @keyframes float-soft {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-float-soft {
+    animation: float-soft 8s ease-in-out infinite;
+  }
+
+  @keyframes glow-sweep {
+    0% { transform: translateX(-110%); opacity: 0; }
+    50% { opacity: 0.35; }
+    100% { transform: translateX(110%); opacity: 0; }
+  }
+
+  .glow-sweep::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+    transform: translateX(-110%);
+    animation: glow-sweep 2.5s ease-in-out infinite;
   }
 
   /* ============ LANDING PAGE GLOW ANIMATIONS ============ */

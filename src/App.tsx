@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import Auth from "@/pages/Auth";
 import Landing from "@/pages/Landing";
+import Contact from "@/pages/Contact";
 import Index from "@/pages/Index";
 import PatientDashboard from "@/pages/PatientDashboard";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -28,6 +29,7 @@ function AppRoutes() {
     return (
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Auth />} />
         <Route path="/signup" element={<Auth />} />
         <Route path="*" element={<Landing />} />
@@ -54,6 +56,9 @@ function AppRoutes() {
         }
       />
       
+      {/* Public contact page for all users */}
+      <Route path="/contact" element={<Contact />} />
+
       {/* Patient dashboard */}
       <Route
         path="/patient"

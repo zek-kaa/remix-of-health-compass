@@ -35,6 +35,9 @@ export default function Landing() {
   const [hasExploded, setHasExploded] = useState(false);
   const ctaWrapperRef = useRef<HTMLDivElement>(null);
   const navLoginRef = useRef<HTMLDivElement>(null);
+  const heroBgRef = useRef<HTMLDivElement>(null);
+  const heroMidRef = useRef<HTMLDivElement>(null);
+  const heroFgRef = useRef<HTMLDivElement>(null);
 
   // (No body scroll lock — cards expand inline as accordions)
 
@@ -174,9 +177,51 @@ export default function Landing() {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => { scrollRef.current = window.scrollY; };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const elements = Array.from(document.querySelectorAll<HTMLElement>(".scroll-reveal"));
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.16, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    let ticking = false;
+    const layers = [
+      { node: heroBgRef.current, speed: 0.08 },
+      { node: heroMidRef.current, speed: 0.16 },
+      { node: heroFgRef.current, speed: 0.26 },
+    ].filter((item): item is { node: HTMLElement; speed: number } => Boolean(item.node));
+
+    const updateParallax = () => {
+      const scrollY = window.scrollY;
+      layers.forEach(({ node, speed }) => {
+        node.style.transform = `translate3d(0, ${scrollY * speed}px, 0)`;
+      });
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateParallax);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    updateParallax();
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
@@ -218,19 +263,21 @@ export default function Landing() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative pt-20 sm:pt-32 pb-8 sm:pb-0 px-4 sm:px-6 overflow-hidden min-h-screen flex items-center justify-center z-10"
-        style={{ backgroundImage: `url('/1 (2).png')`, backgroundSize: 'cover', backgroundPosition: 'center', animation: 'zoom-in-out 8s ease-in-out infinite' }}>
+      <section className="relative pt-20 sm:pt-32 pb-8 sm:pb-0 px-4 sm:px-6 overflow-hidden min-h-screen flex items-center justify-center z-10">
+        <div ref={heroBgRef} className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 will-change-transform" style={{ backgroundImage: "url('/1 (2).png')" }} />
+        <div ref={heroMidRef} className="absolute -left-24 top-10 w-96 h-96 rounded-full bg-blue-400/12 blur-3xl opacity-70 will-change-transform" />
+        <div ref={heroFgRef} className="absolute right-0 bottom-10 w-72 h-72 rounded-full bg-slate-900/10 blur-3xl opacity-80 will-change-transform" />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-50 via-blue-50/80 to-transparent" />
         <div className="w-full max-w-6xl mx-auto relative z-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 items-center">
             <div className="space-y-6 sm:space-y-8 order-1 lg:order-1">
-              <div className="space-y-4 sm:space-y-6 animate-fade-in-up">
-                <div className="inline-block">
+              <div className="space-y-4 sm:space-y-6 scroll-reveal delay-100">
+                <div className="inline-block scroll-reveal delay-200">
                   <span className="text-xs sm:text-sm font-semibold text-blue-600 bg-blue-100/60 px-3 sm:px-4 py-2 rounded-full border border-blue-200/50 neumorphic-badge backdrop-blur-sm">
                     {t('landing.badge')}
                   </span>
                 </div>
-                <div className="space-y-3 sm:space-y-4">
+                <div className="space-y-3 sm:space-y-4 scroll-reveal delay-300">
                   <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-tight text-slate-900 min-h-[3.5rem] sm:min-h-[7rem]">
                     {typedH1}
                     {typingPhase === "h1" && (
@@ -252,20 +299,69 @@ export default function Landing() {
                     )}
                   </p>
                 </div>
-                <div ref={ctaWrapperRef} className="flex flex-col sm:flex-row gap-3 pt-2 sm:pt-4">
+                <div ref={ctaWrapperRef} className="flex flex-col sm:flex-row gap-3 pt-2 sm:pt-4 scroll-reveal delay-400">
                   <LoginDropdown variant="cta" className="w-full sm:w-auto" />
                 </div>
-                <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-6 sm:pt-8 border-t border-slate-200/50 animate-fade-in" style={{ animationDelay: "200ms" }}>
+                <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-6 sm:pt-8 border-t border-slate-200/50 scroll-reveal delay-500">
                   <div>
                     <p className="text-2xl sm:text-3xl font-bold text-blue-600">99.9%</p>
                     <p className="text-xs sm:text-sm text-slate-600 mt-1">Uptime</p>
                   </div>
                   <div>
-        
-                  </div>
-                  <div>
                     <p className="text-2xl sm:text-3xl font-bold text-blue-600">24/7</p>
                     <p className="text-xs sm:text-sm text-slate-600 mt-1">Monitoring</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl sm:text-3xl font-bold text-blue-600">Trusted</p>
+                    <p className="text-xs sm:text-sm text-slate-600 mt-1">Worldwide</p>
+                  </div>
+                </div>
+                <div className="mt-8 scroll-reveal delay-600 overflow-hidden">
+                  <div className="hero-hero-cards grid grid-cols-4 gap-2">
+                    {[
+                      {
+                        title: "Real-time Monitoring",
+                        subtitle: "BP, Sugar, BMI, Sleep",
+                        stat: "4 live metrics",
+                        tone: "from-blue-500 to-sky-500",
+                      },
+                      {
+                        title: "Risk Screening",
+                        subtitle: "Heart, Diabetes, Mental Health",
+                        stat: "Low risk",
+                        tone: "from-cyan-500 to-blue-600",
+                      },
+                      {
+                        title: "Lifestyle Optimization",
+                        subtitle: "Nutrition, Exercise, Hydration",
+                        stat: "Personalized plan",
+                        tone: "from-emerald-500 to-teal-500",
+                      },
+                      {
+                        title: "Insights & Reports",
+                        subtitle: "Trends, Correlations, Alerts",
+                        stat: "Weekly summary",
+                        tone: "from-blue-600 to-slate-700",
+                      },
+                    ].map((item, index) => (
+                      <div
+                        key={index}
+                        className="group relative overflow-hidden rounded-3xl border border-slate-200/70 bg-white/95 p-2 sm:p-3 shadow-floating transition-transform duration-300 hover:-translate-y-1 hover:shadow-glow"
+                      >
+                        <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-gradient-to-br from-white via-blue-50 to-transparent" />
+                        <div className="relative z-10 space-y-1">
+                          <div className={`inline-flex rounded-2xl bg-gradient-to-br ${item.tone} px-2 py-1 text-white shadow-lg shadow-blue-500/20`}>
+                            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em]">{item.title}</span>
+                          </div>
+                          <div>
+                            <p className="text-[10px] sm:text-[11px] font-semibold text-slate-900 leading-tight">{item.subtitle}</p>
+                          </div>
+                          <div className="rounded-2xl bg-slate-50 px-2 py-1 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-700">
+                            {item.stat}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -275,49 +371,64 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section className="relative py-16 sm:py-24 px-4 sm:px-6 z-10">
+      <section className="relative py-16 sm:py-24 px-4 sm:px-6 z-10 scroll-reveal delay-100">
         <div className="max-w-6xl mx-auto">
           <div className="space-y-12 sm:space-y-16">
-            <div className="text-center max-w-2xl mx-auto animate-fade-in-up">
+            <div className="text-center max-w-2xl mx-auto">
               <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 mb-4 sm:mb-6">
                 {t('landing.feature1Title')} <span className="bg-gradient-to-r from-blue-600 to-slate-600 bg-clip-text text-transparent">{t('common.appName')}</span>
               </h2>
               <p className="text-sm sm:text-lg text-slate-600">{t('landing.description')}</p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 items-start scroll-reveal delay-200">
               {[
                 {
-                  icon: Users,
-                  title: t('dashboard.patients'),
-                  desc: t('landing.feature1Desc'),
-                  color: "from-blue-500 to-blue-600",
+                  icon: Stethoscope,
+                  title: "Health Monitoring",
+                  desc: "Track BP, Sugar, BMI and Sleep with daily score insights.",
+                  stat: "4 active metrics",
                   details: [
-                    t('landing.feature1Desc'),
-                    t('landing.dataAnalyticsDesc'),
-                    t('landing.modernTechDesc'),
+                    "Real-time vitals capture with automatic trend flags.",
+                    "Sleep and recovery insight for smarter routine choices.",
+                    "Secure summary reports for patients and clinicians.",
                   ],
+                  color: "from-blue-500 to-sky-500",
                 },
                 {
-                  icon: Bell,
-                  title: t('landing.feature2Title'),
-                  desc: t('landing.feature2Desc'),
-                  color: "from-cyan-500 to-blue-500",
+                  icon: Heart,
+                  title: "Risk Screening",
+                  desc: "Spot heart, diabetes and mental health risks early.",
+                  stat: "Risk level: Low",
                   details: [
-                    t('landing.feature2Desc'),
-                    t('landing.modernTechDesc'),
-                    t('landing.feature1Desc'),
+                    "Predictive screening with personalized risk levels.",
+                    "Heart and metabolic health signals in one dashboard.",
+                    "Alerts and actionable recommendations for prevention.",
                   ],
+                  color: "from-cyan-500 to-blue-500",
+                },
+                {
+                  icon: Activity,
+                  title: "Lifestyle Optimization",
+                  desc: "Nutrition, exercise and hydration plans tuned daily.",
+                  stat: "Plan ready",
+                  details: [
+                    "Smart guidance for meals, movement and fluid balance.",
+                    "Behavioral nudges and performance summaries.",
+                    "Integrated support for healthier routines every day.",
+                  ],
+                  color: "from-emerald-500 to-teal-500",
                 },
                 {
                   icon: BarChart3,
-                  title: t('landing.dataAnalytics'),
-                  desc: t('landing.dataAnalyticsDesc'),
-                  color: "from-blue-600 to-slate-600",
+                  title: "Insights & Reports",
+                  desc: "Actionable trends and clinical-quality health reports.",
+                  stat: "52 insights/week",
                   details: [
-                    t('landing.dataAnalyticsDesc'),
-                    t('landing.modernTechDesc'),
-                    t('landing.feature2Desc'),
+                    "Interactive charts and trend-driven health summaries.",
+                    "Correlation reports for lifestyle, sleep and vitals.",
+                    "Executive-ready dashboards for care planning.",
                   ],
+                  color: "from-blue-600 to-slate-600",
                 },
               ].map((feature, i) => (
                 <ExpandableFeatureCard
@@ -326,6 +437,7 @@ export default function Landing() {
                   title={feature.title}
                   desc={feature.desc}
                   color={feature.color}
+                  stat={feature.stat}
                   details={feature.details}
                   isOpen={expandedFeature === i}
                   onToggle={() =>
@@ -361,8 +473,7 @@ export default function Landing() {
           <div className="absolute inset-0 bg-gradient-to-r from-slate-50/70 via-blue-50/40 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/40" />
         </div>
-
-        <div className="max-w-6xl mx-auto relative">
+        <div className="max-w-6xl mx-auto relative scroll-reveal delay-100">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 items-center">
             <div className="relative h-56 sm:h-96 rounded-3xl overflow-hidden shadow-floating border border-white/50 animate-fade-in-up order-2 lg:order-1">
               <img
@@ -373,7 +484,7 @@ export default function Landing() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 to-transparent" />
             </div>
-            <div className="space-y-4 sm:space-y-6 animate-fade-in-up order-1 lg:order-2">
+            <div className="space-y-4 sm:space-y-6 scroll-reveal delay-200 order-1 lg:order-2">
               <h3 className="text-2xl sm:text-4xl font-black text-slate-900">
                 {t('landing.modernTech')}
                 <span className="block text-blue-600">{t('landing.forBetterResults')}</span>
@@ -381,7 +492,11 @@ export default function Landing() {
               <p className="text-sm sm:text-base text-slate-700 leading-relaxed">{t('landing.modernTechDesc')}</p>
               <div className="space-y-3 sm:space-y-4 pt-2">
                 {[t('landing.realtimeAnalytics'), t('landing.predictiveAlerts'), t('landing.cloudStorage')].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm sm:text-base text-slate-700 neumorphic-list">
+                  <div
+                    key={i}
+                    className="flex items-center gap-3 text-sm sm:text-base text-slate-700 neumorphic-list scroll-reveal"
+                    style={{ transitionDelay: `${220 + i * 80}ms` }}
+                  >
                     <div className="w-2 h-2 bg-gradient-to-r from-blue-600 to-slate-600 rounded-full" />
                     {item}
                   </div>
@@ -399,7 +514,7 @@ export default function Landing() {
       <section className="relative py-12 sm:py-24 px-4 sm:px-6 z-10">
         <div className="max-w-4xl mx-auto">
           <div
-            className="group relative rounded-3xl overflow-hidden animate-fade-in-up transition-all duration-500 hover:-translate-y-1"
+            className="group relative rounded-3xl overflow-hidden scroll-reveal delay-100 transition-all duration-500 hover:-translate-y-1"
             style={{
               background:
                 "linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.18) 100%)",
@@ -427,11 +542,10 @@ export default function Landing() {
               </div>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-2 sm:pt-4">
                 <LoginDropdown variant="cta" />
-                <button
-                  className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl text-slate-900 font-semibold transition-all hover:-translate-y-0.5"
+                <Link
+                  to="/contact"
+                  className="w-full sm:w-auto inline-flex h-12 sm:h-14 items-center justify-center rounded-xl bg-white/80 px-6 sm:px-8 text-slate-900 font-semibold transition-all hover:-translate-y-0.5 hover:bg-white"
                   style={{
-                    background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0.15))",
                     backdropFilter: "blur(16px) saturate(160%)",
                     WebkitBackdropFilter: "blur(16px) saturate(160%)",
                     border: "1px solid rgba(255,255,255,0.55)",
@@ -440,7 +554,7 @@ export default function Landing() {
                   }}
                 >
                   {t('landing.qualitySummary')}
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -478,7 +592,7 @@ export default function Landing() {
               <p className="text-xs sm:text-sm font-semibold text-slate-900 mb-3 sm:mb-4">{t('landing.contact')}</p>
               <ul className="space-y-2 text-xs sm:text-sm text-slate-600">
                 <li><a href="#" className="hover:text-blue-600 transition">{t('landing.support')}</a></li>
-                <li><a href="#" className="hover:text-blue-600 transition">{t('landing.contact')}</a></li>
+                <li><Link to="/contact" className="hover:text-blue-600 transition">{t('landing.contact')}</Link></li>
               </ul>
             </div>
           </div>
